@@ -10,7 +10,7 @@ exports.getAll = async () => {
 }
 
 exports.getById = async (id) => {
-    const result = await userDB.findById(id).lean()
+    const result = await UserDB.findById(id).lean()
     if (!result) {
         return null
     } else {
@@ -19,11 +19,12 @@ exports.getById = async (id) => {
 }
 
 exports.create = async (user) => {
-    const result = await UserDB.create(user)
-    if (!result) {
-        return null
-    } else {
-        return result
+    try {
+        const newUser = await UserDB(user)
+        newUser.save()
+        return newUser
+    } catch (err) {
+        throw err
     }
 }
 
@@ -39,6 +40,15 @@ exports.updateById = async (id, updated) => {
 
 exports.deleteById = async (id) => {
     const result = UserDB.remove({_id: id}, {single: true})
+    if (!result) {
+        return null
+    } else {
+        return result
+    }
+}
+
+exports.getByEmail= async (email) => {
+    const result = await UserDB.findOne({email: email}).lean()
     if (!result) {
         return null
     } else {

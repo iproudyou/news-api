@@ -6,10 +6,7 @@ exports.getProducts = async (req, res) => {
         const products = await productModel.getAll()
 
         if (!products) {
-            return res.status(400).json({
-                success: false,
-                message: 'Products Not Found'
-            })
+            return res.status(400).send()
         } else {
             return res.status(200).json({
                 success: true,
@@ -17,10 +14,7 @@ exports.getProducts = async (req, res) => {
             })
         }
     } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err
-        })
+        return res.status(500).send()
     }
 }
 
@@ -30,10 +24,7 @@ exports.getProduct = async (req, res) => {
         const product = await productModel.getById(id)
 
         if (!product) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product Not Found'
-            })
+            return res.status(400).send()
         } else {
             return res.status(200).json({
                 success: true,
@@ -41,10 +32,7 @@ exports.getProduct = async (req, res) => {
             })
         }
     } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err
-        })
+        return res.status(500).send()
     }
 }
 
@@ -60,10 +48,7 @@ exports.createProduct = async (req, res) => {
 
         const product = await productModel.create(newProduct)
         if (!product) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product Not Created'
-            })
+            return res.status(400).send()
         } else {
             return res.status(201).json({
                 success: true,
@@ -71,10 +56,7 @@ exports.createProduct = async (req, res) => {
             })
         }
     } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err
-        })
+        return res.status(500).send()
     }
 }
 
@@ -86,10 +68,7 @@ exports.updateProduct = async (req, res) => {
         const product = await productModel.updateById(id, updated)
 
         if (!product) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product Not Updated'
-            })
+            return res.status(400).send()
         } else {
             return res.status(200).json({
                 success: true,
@@ -97,10 +76,7 @@ exports.updateProduct = async (req, res) => {
             })
         }
     } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err
-        })
+        return res.status(500).send()
     }
 }
 
@@ -111,10 +87,7 @@ exports.deleteProduct = async (req, res) => {
         const deleted = await productModel.removeById(id)
 
         if (deleted.deletedCount === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'User Not Deleted'
-            })
+            return res.status(400).send()
         } else {
             return res.status(200).json({
                 success: true,
@@ -122,10 +95,7 @@ exports.deleteProduct = async (req, res) => {
             })
         }
     } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err
-        })
+        return res.status(500).send()
     }
 }
 

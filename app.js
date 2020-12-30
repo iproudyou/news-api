@@ -1,35 +1,54 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const morgan = require('morgan')
-const exphbs = require('express-handlebars')
-const bodyParser = require('body-parser')
-const connectDB = require('./db/connection')
-const router = require('./routes/')
+const express = require('express');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const { errors } = require('celebrate');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+require('dotenv').config();
 
-// Load config
-dotenv.config({ path: './.env' })
+const connectDB = require('./db/connection');
+const routes = require('./routes/');
+const UserModel = require('./db/User');
 
-connectDB()
+// Create the Express applictation
+const app = express();
 
-const app = express()
+// Connecting with the database
+connectDB();
 
-// Body parser
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+    origin: "http://localhost:3000", // <-- the location of the react app we're connecting to
+    credentials: true
+}));
 
-// Logging
-if (process.env.NODE_DEV === 'development') {
-    app.use(morgan('dev'))
-}
+// Session Setup
+// const sessionStore = new MongoStore({ 
+//     mongooseConnection: connection, 
+//     collection: 'session'
+// })
 
-// Handlebars
-app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
-app.set('view engine', '.hbs')
+// app.use(session({
+//     secret: process.env.SECRET,
+//     resave: false,
+//     saveUninitialized: true,
+//     store: sessionStore,
+//     cookie: {
+//         maxAge: 1000 * 60 * 60 * 24 // Equals 1 day
+//     }
+// }));
+
+// Passport Authentication
+
 
 // Routes
-app.use('/', router)
+app.use('/', routes);
+app.use(errors())
 
-const PORT = process.env.PORT || 3000
-
+// Start the server
+const PORT = process.env.PORT || 3020
 app.listen(PORT, console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`))
 
