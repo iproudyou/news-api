@@ -1,7 +1,7 @@
-const UserDB = require('../../db/Users')
+const NewsDB = require('../../db/News')
 
 exports.getAll = async () => {
-    const result = await UserDB.find({}).lean()
+    const result = await NewsDB.find({}).lean();
     if (!result) {
         return null
     } else {
@@ -10,7 +10,7 @@ exports.getAll = async () => {
 }
 
 exports.getById = async (id) => {
-    const result = await UserDB.findById(id).lean()
+    const result = await NewsDB.findById(id).lean()
     if (!result) {
         return null
     } else {
@@ -18,18 +18,18 @@ exports.getById = async (id) => {
     }
 }
 
-exports.create = async (user) => {
+exports.create = async (news) => {
     try {
-        const newUser = await UserDB(user)
-        newUser.save()
-        return newUser
+        const newArticle = await NewsDB.create(news);
+        newArticle.save()
+        return newArticle
     } catch (err) {
         throw err
     }
 }
 
 exports.updateById = async (id, updated) => {
-    const result = await UserDB.findOneAndUpdate({_id: id}, updated,
+    const result = NewsDB.findOneAndUpdate({_id: id}, updated, 
         {new: true})
     if (!result) {
         return null
@@ -38,8 +38,8 @@ exports.updateById = async (id, updated) => {
     }
 }
 
-exports.deleteById = async (id) => {
-    const result = await UserDB.remove({_id: id}, {single: true})
+exports.removeById = async (id) => {
+    const result = NewsDB.remove({_id: id}, {single: true})
     if (!result) {
         return null
     } else {
@@ -47,12 +47,14 @@ exports.deleteById = async (id) => {
     }
 }
 
-exports.getByEmail= async (email) => {
-    const result = await UserDB.findOne({email: email}).lean()
+exports.getByUrl= async (url) => {
+    const result = await NewsDB.findOne({url: url}).lean()
 
     if (!result) {
         return null
     } else {
-        return new UserDB(result);
+        return new NewsDB(result);
     }
 }
+
+

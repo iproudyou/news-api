@@ -1,49 +1,22 @@
-const passport = require('passport');
-const localStrategy = require('passport-local').Strategy;
-const UserModel = require('../../db/User');
+const LoginTokenDB = require('../../db/loginTokens');
+const CreateError = require('http-error');
 
-module.exports = function (passport) {
-    passport.use(
-        'signin',
-        new localStrategy(
-            {
-                usernameField: 'email',
-                passwordField: 'password'
-            },
-            async (username, password, done) => {
-                try {
-                    const user = await UserModel.getByEmail(username);
+const auth = (req, res, next) => {
+    const bearerToken = req.headers.authorization;
+    const accessToken = bearerToken.split(" ")[1];
 
-                    if (!user) {
-                        // user not found error
-                        return done(null, false, { message: 'User not found' })
-                    }
+    if (!accessToken) res.status(401).send();
 
-                const validate = await user.isValidPassword(password);
+    LoginTokenDB.verifyAccessToken(accessToken, (err, userId) => {
+        if (err) return new CreateError.Unauthorized(err);
 
-                if (!validate) {
-                    // wrong password error
-                    return done(null, false, { message: 'Wrong password' });
-                }
+        if (!userId) return new CreateError.Unauthorized();
 
-                // user information is sent to the next middleware
-                return done(null, user, { message: 'Logged in Successfully' })
-                } catch (err) {
-                    done(err)
-                }
-            }
-        )
-    );
-
-    // stores cookie in the browser
-    passport.serializeUser((user, cb) => {
-        cb(null, user.id);
+        req.userId = userId;
+        next();
     })
+}
 
-    // returns the user from the cookie
-    passport.deserializeUser((id, cb) => {
-        UserModel.findOne({_id: id}, (err, user) => {
-            cb(err. user);
-        })
-    })
+module.exports = {
+    auth,
 }

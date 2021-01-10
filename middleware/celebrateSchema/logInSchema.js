@@ -1,6 +1,6 @@
 const { Joi } = require('celebrate');
 
-const signInSchema = {
+const logInSchema = {
     body: Joi.object().keys({
         email: Joi.string()
             .required()
@@ -14,7 +14,6 @@ const signInSchema = {
             .required(),
 
         remember: Joi.boolean()
-
     })
 }
 
@@ -48,7 +47,7 @@ const signUpSchema = {
 }
 
 module.exports = {
-    signInSchema,
+    logInSchema,
     signUpSchema
 }
 

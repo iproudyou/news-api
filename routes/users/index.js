@@ -1,7 +1,6 @@
-const bcrypt = require('bcryptjs')
-const passport = require('passport')
-const User = require('../../db/User')
-const UserModel = require('../../models/users/')
+const UserModel = require('../../models/users/');
+const loginTokenModel = require('../../models/loginTokens');
+const CreateError = require('http-error');
 
 exports.getUsers = async (req, res) => {
     try {
@@ -77,23 +76,58 @@ exports.deleteUser = async (req, res) => {
     }
 }
 
-exports.signIn = async (req,res) => {
+exports.logIn = async (req, res) => {
     try {
         const { email, password } = req.body
         const user = await UserModel.getByEmail(email)
 
         if (!user) {
-            return res.status(400).send();
+            return new CreateError.Unauthorized("logIn: User not found")
         }
 
-        const validate = await user.isValidPassword(password);
+        await user.comparePassword(password, (err, isMatch) => {
+            if (!isMatch) {
+                return new CreateError.Unauthorized("logIn: comparePassword failed")
+            }
+        });
 
-        if (!validate) {
-            return res.status(400).send();
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
+
+        if (!accessToken || !refreshToken) {
+            return new CreateError.BadRequest("logIn: tokens not generated")
         }
-        return res.status(200).send()
+
+        const loginToken = {
+            userId: user._id,
+            accessToken,
+            refreshToken,
+            accessTokenExpires: new Date(new Date().getTime() + parseInt(process.env.ACCESS_TOKEN_LIFE) * 1000),
+            refreshTokenExpires: new Date(new Date().getTime() + parseInt(process.env.REFRESH_TOKEN_LIFE) * 1000),
+            updated: new Date(),
+        }
+
+        await loginTokenModel.create(loginToken);
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                accessToken,
+                refreshToken,
+                user,
+            }
+        })
     } catch (err) {
         return res.status(500).send()
+    }
+}
+
+exports.logOut = async (req, res) => {
+    try {
+        await loginTokenModel.deleteAllByUserId(req.userId);
+        return res.status(200).send()
+    } catch (err) {
+        return new CreateError.InternalServerError("Something went wrong")
     }
 }
 
