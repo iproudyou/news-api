@@ -8,6 +8,9 @@ const NewsSchema = new mongoose.Schema({
     source: {
         type: String,
     },
+    category: {
+        type: String,
+    },
     author: {
         type: String,
     },

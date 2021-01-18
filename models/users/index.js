@@ -1,4 +1,4 @@
-const UserDB = require('../../db/Users')
+const UserDB = require('../../db/users')
 
 exports.getAll = async () => {
     const result = await UserDB.find({}).lean()

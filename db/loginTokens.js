@@ -38,12 +38,17 @@ LoginTokenSchema.pre('findOneAndUpdate', async function(next) {
 })
 
 LoginTokenSchema.statics.verifyAccessToken = function(accessToken, cb) {
-    const loginToken = this;
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, function(err, decoded) {
-        if (err) return cb(err)
+        if (err) return cb(err);
         cb(null, decoded.userId);
     })
 }
 
-module.exports = LoginToken = mongoose.model('LoginToken', LoginTokenSchema);
+LoginTokenSchema.statics.verifyRefreshToken = function(refreshToken, cb) {
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, function(err, decoded) {
+        if (err) return cb(err);
+        cb(null, decoded.userId);
+    })
+}
 
+module.exports = mongoose.model('LoginToken', LoginTokenSchema);

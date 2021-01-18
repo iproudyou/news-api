@@ -6,7 +6,7 @@ const { auth } = require('../middleware/auth/auth');
 
 // @desc    Shows all news
 // @route   GET /news
-router.get('/api/news', auth, news.getAllNews)
+router.get('/api/news', news.getAllNews)
 
 // @desc    Shows single news
 // @route   GET /news/:id

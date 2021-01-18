@@ -11,12 +11,10 @@ require('./db/connection')();
 const app = express();
 
 // Middleware
+app.use(cors());
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: "http://localhost:3000", // <-- the location of the react app we're connecting to
-    credentials: true
-}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Routes

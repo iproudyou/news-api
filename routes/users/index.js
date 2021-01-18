@@ -78,8 +78,8 @@ exports.deleteUser = async (req, res) => {
 
 exports.logIn = async (req, res) => {
     try {
-        const { email, password } = req.body
-        const user = await UserModel.getByEmail(email)
+        const { email, password } = req.body;
+        const user = await UserModel.getByEmail(email);
 
         if (!user) {
             return new CreateError.Unauthorized("logIn: User not found")
@@ -177,6 +177,37 @@ exports.checkEmailExist = async (req,res) => {
                 message: 'This email is already in use'
             })
         } 
+    } catch (err) {
+        return res.status(500).send()
+    }
+}
+
+exports.resetAccessToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        await LoginTokenDB.verifyRefreshToken(refreshToken, async (err, userId) => {
+            if (err) return new CreateError.Unauthorized(err);
+
+            if (!userId) return new CreateError.Unauthorized();
+
+            const user = await UserModel.getById(userId)
+            
+            if (!user) return new CreateError.Unauthorized();
+
+            const accessToken = await user.generateAccessToken();
+            const update = { 
+                accessToken,
+            }
+            await loginTokenModel.updateByUserId(user._id, update);
+
+            return res.status(200).json({
+                success: true,
+                data: {
+                    accessToken,
+                }
+            })
+        })
     } catch (err) {
         return res.status(500).send()
     }

@@ -6,27 +6,21 @@ const { logInSchema, signUpSchema } = require('../middleware/celebrateSchema/log
 const users = require('./users/');
 const { auth } = require('../middleware/auth/auth');
 
-// @desc    Shows all users
-// @route   GET /users
+// @route   GET
 router.get('/api/users', auth, users.getUsers)
-
-// @desc    Shows single user
-// @route   GET /users/:id
 router.get('/api/users/:id', auth, users.getUser)
-router.get('/api/user/auth/logout', auth, users.logOut)
+router.get('/api/users/auth/logout', auth, users.logOut)
 
-// @desc    Process add user
-// @route   POST /users/signup
-router.post('/api/user/auth/login', celebrate(logInSchema), users.logIn)
-router.post('/api/user/auth/signup', celebrate(signUpSchema), users.signUp)
-router.post('/api/user/auth/signup/checkemail', users.checkEmailExist)
+// @route   POST
+router.post('/api/users/auth/login', celebrate(logInSchema), users.logIn)
+router.post('/api/users/auth/signup', celebrate(signUpSchema), users.signUp)
+router.post('/api/users/auth/signup/checkemail', users.checkEmailExist)
+router.post('/api/users/auth/refresh', users.resetAccessToken)
 
-// @desc    Update user
-// @route   PUT /users/:id
+// @route   PUT
 router.put('/api/users/:id', auth, users.updateUser)
 
-// @desc    Delete user
-// @route   DELETE /users/:id
+// @route   DELETE
 router.delete('/api/users/:id', auth, users.deleteUser)
 
 module.exports = router

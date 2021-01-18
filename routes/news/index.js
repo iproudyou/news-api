@@ -1,18 +1,19 @@
 const axios = require('axios');
+
 const newsModel = require('../../models/news/');
 
 exports.getAllNews = async (req, res) => {
     try {
-        const news = await newsModel.getAll()
-
+        const news = await newsModel.getAll();
         if (!news) {
             return res.status(400).send()
-        } else {
-            return res.status(200).json({
-                success: true,
-                data: news
-            })
         }
+
+        return res.status(200).json({
+            success: true,
+            data: news
+        })
+
     } catch (err) {
         return res.status(500).send()
     }
@@ -25,12 +26,12 @@ exports.getNews = async (req, res) => {
 
         if (!news) {
             return res.status(400).send()
-        } else {
-            return res.status(200).json({
-                success: true,
-                data: news
-            })
         }
+
+        return res.status(200).json({
+            success: true,
+            data: news
+        })
     } catch (err) {
         return res.status(500).send()
     }
@@ -38,21 +39,26 @@ exports.getNews = async (req, res) => {
 
 exports.createNews = async (req, res) => {
     try {
-        const baseUrl = 'https://newsapi.org/v2/';
+        const baseUrl = "https://newsapi.org/v2/";
         const endPoint = "top-headlines";
-        const country = 'us';
+        const country = "us";
+        const categories = ["business", "entertainment", "general", "health", "science", "sports", "technology"];
         const apiKey = process.env.NEWS_API_KEY;
 
-        const url = baseUrl + endPoint + "?" + "country=" + country + "&" + "apiKey=" + apiKey;
+        const url = (category) => {
+            return baseUrl + endPoint + "?" + "country=" + country + "&" + "category=" + category + "&" + "apiKey=" + apiKey;
+        } 
 
-        const result = await axios.get(url);
-
-        result.data.articles.filter(article => article.url.length > 0)
-            .forEach(async article => {
-                const existedUrl = article.url && await newsModel.getByUrl(article.url);
+        const createArticles = async (articles, category) => {
+            for (let article of articles) {
+                if (!article.url || !article.urlToImage || !article.content) {
+                    continue;
+                }
+                const existedUrl = await newsModel.getByUrl(article.url);
                 if (!existedUrl) {
                     const news = {
                         url: article.url,
+                        category,
                         source: article.source.name || "",
                         author: article.author || "",
                         publishedAt: article.publishedAt || "",
@@ -63,7 +69,18 @@ exports.createNews = async (req, res) => {
                     }
                     await newsModel.create(news);
                 } 
-        })
+            }
+        }
+
+        for (let category of categories) {
+            const newUrl = url(category);
+            const result = await axios.get(newUrl);
+            const articles = result.data.articles;
+
+            if (articles.length > 0) {
+                await createArticles(articles, category);
+            }
+        }
 
         return res.status(201);
     } catch (err) {
@@ -80,12 +97,13 @@ exports.updateNews = async (req, res) => {
 
         if (!news) {
             return res.status(400).send()
-        } else {
-            return res.status(200).json({
-                success: true,
-                data: news
-            })
         }
+
+        return res.status(200).json({
+            success: true,
+            data: news
+        })
+
     } catch (err) {
         return res.status(500).send()
     }
@@ -99,12 +117,12 @@ exports.deleteNews = async (req, res) => {
 
         if (deleted.deletedCount === 0) {
             return res.status(400).send()
-        } else {
-            return res.status(200).json({
-                success: true,
-                data: deleted.deletedCount
-            })
         }
+
+        return res.status(200).json({
+            success: true,
+            data: deleted.deletedCount
+        })
     } catch (err) {
         return res.status(500).send()
     }

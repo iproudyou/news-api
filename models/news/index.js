@@ -1,4 +1,4 @@
-const NewsDB = require('../../db/News')
+const NewsDB = require('../../db/news')
 
 exports.getAll = async () => {
     const result = await NewsDB.find({}).lean();

@@ -81,4 +81,4 @@ UserSchema.methods.generateRefreshToken = function() {
 }
 
 // allow search and save for users
-module.exports = UserModel = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema);
