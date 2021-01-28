@@ -1,7 +1,7 @@
-const NewsDB = require('../../db/news')
+const ArticleDB = require('../../db/articles')
 
 exports.getAll = async () => {
-    const result = await NewsDB.find({}).lean();
+    const result = await ArticleDB.find({}).lean();
     if (!result) {
         return null
     } else {
@@ -10,7 +10,7 @@ exports.getAll = async () => {
 }
 
 exports.getById = async (id) => {
-    const result = await NewsDB.findById(id).lean()
+    const result = await ArticleDB.findById(id).populate(category).lean()
     if (!result) {
         return null
     } else {
@@ -18,9 +18,9 @@ exports.getById = async (id) => {
     }
 }
 
-exports.create = async (news) => {
+exports.create = async (article) => {
     try {
-        const newArticle = await NewsDB.create(news);
+        const newArticle = await ArticleDB.create(article);
         newArticle.save()
         return newArticle
     } catch (err) {
@@ -29,7 +29,7 @@ exports.create = async (news) => {
 }
 
 exports.updateById = async (id, updated) => {
-    const result = NewsDB.findOneAndUpdate({_id: id}, updated, 
+    const result = ArticleDB.findOneAndUpdate({_id: id}, updated, 
         {new: true})
     if (!result) {
         return null
@@ -39,7 +39,7 @@ exports.updateById = async (id, updated) => {
 }
 
 exports.removeById = async (id) => {
-    const result = NewsDB.remove({_id: id}, {single: true})
+    const result = ArticleDB.remove({_id: id}, {single: true})
     if (!result) {
         return null
     } else {
@@ -48,12 +48,12 @@ exports.removeById = async (id) => {
 }
 
 exports.getByUrl= async (url) => {
-    const result = await NewsDB.findOne({url: url}).lean()
+    const result = await ArticleDB.findOne({url: url}).lean()
 
     if (!result) {
         return null
     } else {
-        return new NewsDB(result);
+        return new ArticleDB(result);
     }
 }
 

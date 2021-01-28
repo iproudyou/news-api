@@ -1,17 +1,17 @@
 const axios = require('axios');
 
-const newsModel = require('../../models/news/');
+const articleModel = require('../../models/articles/');
 
-exports.getAllNews = async (req, res) => {
+exports.getAllArticles = async (req, res) => {
     try {
-        const news = await newsModel.getAll();
-        if (!news) {
+        const articles = await articleModel.getAll();
+        if (!articles) {
             return res.status(400).send()
         }
 
         return res.status(200).json({
             success: true,
-            data: news
+            data: articles
         })
 
     } catch (err) {
@@ -19,30 +19,30 @@ exports.getAllNews = async (req, res) => {
     }
 }
 
-exports.getNews = async (req, res) => {
+exports.getArticle = async (req, res) => {
     try {
         const id = req.params.id
-        const news = await newsModel.getById(id)
+        const article = await articleModel.getById(id)
 
-        if (!news) {
+        if (!article) {
             return res.status(400).send()
         }
 
         return res.status(200).json({
             success: true,
-            data: news
+            data: article
         })
     } catch (err) {
         return res.status(500).send()
     }
 }
 
-exports.createNews = async (req, res) => {
+exports.createArticle = async (req, res) => {
     try {
         const baseUrl = "https://newsapi.org/v2/";
         const endPoint = "top-headlines";
         const country = "us";
-        const categories = ["business", "entertainment", "general", "health", "science", "sports", "technology"];
+        const categories = ["general", "business", "entertainment", "technology", "health", "science", "sports"];
         const apiKey = process.env.NEWS_API_KEY;
 
         const url = (category) => {
@@ -54,9 +54,9 @@ exports.createNews = async (req, res) => {
                 if (!article.url || !article.urlToImage || !article.content) {
                     continue;
                 }
-                const existedUrl = await newsModel.getByUrl(article.url);
+                const existedUrl = await articleModel.getByUrl(article.url);
                 if (!existedUrl) {
-                    const news = {
+                    const newArticle = {
                         url: article.url,
                         category,
                         source: article.source.name || "",
@@ -67,7 +67,7 @@ exports.createNews = async (req, res) => {
                         content: article.content || "",
                         urlToImage: article.urlToImage || "",
                     }
-                    await newsModel.create(news);
+                    await articleModel.create(newArticle);
                 } 
             }
         }
@@ -82,26 +82,26 @@ exports.createNews = async (req, res) => {
             }
         }
 
-        return res.status(201);
+        return res.status(201).send();
     } catch (err) {
         return res.status(500).send()
     }
 }
 
-exports.updateNews = async (req, res) => {
+exports.updateArticle = async (req, res) => {
     try {
         const id = req.params.id
         const updated = req.body
 
-        const news = await newsModel.updateById(id, updated)
+        const article = await articleModel.updateById(id, updated)
 
-        if (!news) {
+        if (!article) {
             return res.status(400).send()
         }
 
         return res.status(200).json({
             success: true,
-            data: news
+            data: article
         })
 
     } catch (err) {
@@ -109,11 +109,11 @@ exports.updateNews = async (req, res) => {
     }
 }
 
-exports.deleteNews = async (req, res) => {
+exports.deleteArticle = async (req, res) => {
     try {
         const id = req.params.id
 
-        const deleted = await newsModel.removeById(id)
+        const deleted = await articleModel.removeById(id)
 
         if (deleted.deletedCount === 0) {
             return res.status(400).send()

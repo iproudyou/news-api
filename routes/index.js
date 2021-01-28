@@ -3,7 +3,8 @@ const router = require('express').Router()
 router.use(
     '/',
     require("./users"),
-    require("./news")
+    require("./articles"),
+    require("./graphql")
 );
 
 module.exports = router
