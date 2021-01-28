@@ -10,4 +10,9 @@ router.post('/graphql', auth, graphqlHTTP({
     graphiql: true,
 }));
 
+router.use('/', graphqlHTTP({
+    schema: schema,
+    graphiql: true,
+}));
+
 module.exports = router;
