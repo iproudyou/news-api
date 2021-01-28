@@ -10,7 +10,16 @@ exports.getAll = async () => {
 }
 
 exports.getById = async (id) => {
-    const result = await ArticleDB.findById(id).populate(category).lean()
+    const result = await ArticleDB.findById(id).lean()
+    if (!result) {
+        return null
+    } else {
+        return result
+    }
+}
+
+exports.getByCategory = async (category) => {
+    const result = await ArticleDB.find({category: category}).lean()
     if (!result) {
         return null
     } else {
