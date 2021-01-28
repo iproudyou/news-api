@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const NewsSchema = new mongoose.Schema({
+const ArticleSchema = new mongoose.Schema({
     url: {
         type: String,
         unique: true,
@@ -10,6 +10,7 @@ const NewsSchema = new mongoose.Schema({
     },
     category: {
         type: String,
+        required: true,
     },
     author: {
         type: String,
@@ -35,4 +36,4 @@ const NewsSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("News", NewsSchema);
+module.exports = mongoose.model("Article", ArticleSchema);

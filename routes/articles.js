@@ -1,27 +1,27 @@
 const express = require('express');
 const router = express.Router();
 
-const news = require('./news/');
+const articles = require('./articles/');
 const { auth } = require('../middleware/auth/auth');
 
 // @desc    Shows all news
 // @route   GET /news
-router.get('/api/news', news.getAllNews)
+router.get('/api/articles', articles.getAllArticles)
 
 // @desc    Shows single news
 // @route   GET /news/:id
-router.get('/api/news/:id', auth, news.getNews)
+router.get('/api/articles/:id', auth, articles.getArticle)
 
 // @desc    Process add news
 // @route   POST /news
-router.post('/api/news', news.createNews)
+router.post('/api/articles', articles.createArticle)
 
 // @desc    Update news
 // @route   PUT /news/:id
-router.put('/api/news/:id', auth, news.updateNews)
+router.put('/api/articles/:id', auth, articles.updateArticle)
 
 // @desc    Delete news
 // @route   DELETE /news/:id
-router.delete('/api/news/:id', auth, news.deleteNews)
+router.delete('/api/articles/:id', auth, articles.deleteArticle)
 
 module.exports = router
