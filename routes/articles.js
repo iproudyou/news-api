@@ -6,7 +6,7 @@ const { auth } = require('../middleware/auth/auth');
 
 // @desc    Shows all news
 // @route   GET /news
-router.get('/api/articles', articles.getAllArticles)
+router.get('/api/articles', auth, articles.getAllArticles)
 
 // @desc    Shows single news
 // @route   GET /news/:id
@@ -14,7 +14,7 @@ router.get('/api/articles/:id', auth, articles.getArticle)
 
 // @desc    Process add news
 // @route   POST /news
-router.post('/api/articles', articles.createArticle)
+router.post('/api/articles', auth, articles.createArticle)
 
 // @desc    Update news
 // @route   PUT /news/:id
