@@ -29,9 +29,9 @@ type Article {
     created: DateTime
 }
 type Query {
-    getUser(_id: ID!): User 
+    getUserById(_id: ID!): User 
     allUsers: [User]
-    getArticle(category: String!): [Article]
+    getArticleByCatetogy(category: String!): [Article]
     allArticles: [Article]
 }
 input UserInput {
