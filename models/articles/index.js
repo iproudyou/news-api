@@ -19,7 +19,7 @@ exports.getById = async (id) => {
 }
 
 exports.getByCategory = async (category) => {
-    const result = await ArticleDB.find({category: category}).lean()
+    const result = await ArticleDB.find({category: category}).sort({ publishedAt: 'desc'}).lean();
     if (!result) {
         return null
     } else {
