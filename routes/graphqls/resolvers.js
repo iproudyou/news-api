@@ -5,8 +5,8 @@ exports.resolvers = {
     Query: {
         async allUsers() { return await UserModel.getAll(); },
         async allArticles() { return await ArticleModel.getAll(); },
-        async getUser(root, {_id}) { return await UserModel.getById(_id); },
-        async getArticle(root, { category }) { return await ArticleModel.getByCategory(category)}
+        async getUserById(root, {_id}) { return await UserModel.getById(_id); },
+        async getArticleByCatetogy(root, { category }) { return await ArticleModel.getByCategory(category)}
     },
 
     Mutation: {
