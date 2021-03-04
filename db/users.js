@@ -47,12 +47,16 @@ UserSchema.pre('save', async function(next) {
     next()
 })
 
-UserSchema.methods.comparePassword = function(password, cb) {
-    bcrypt.compare(password, this.password, function(err, isMatch){
-        if (err) return cb(err);
-        cb(null, isMatch);
-    })
+UserSchema.methods.comparePassword = function (password) {
+    return bcrypt.compare(password, this.password);
 }
+
+// UserSchema.methods.comparePassword = function(password, cb) {
+//     bcrypt.compare(password, this.password, function(err, isMatch){
+//         if (err) return cb(err);
+//         cb(null, isMatch);
+//     })
+// }
 
 UserSchema.methods.generateAccessToken = function() {
     try {

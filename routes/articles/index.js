@@ -19,7 +19,7 @@ exports.getAllArticles = async (req, res) => {
     }
 }
 
-exports.getArticle = async (req, res) => {
+exports.getArticleById = async (req, res) => {
     try {
         const id = req.params.id
         const article = await articleModel.getById(id)
@@ -31,6 +31,24 @@ exports.getArticle = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: article
+        })
+    } catch (err) {
+        return res.status(500).send()
+    }
+}
+
+exports.getArticleByCategory = async (req, res) => {
+    try {
+        const category = req.params.category
+        const articles = await articleModel.getByCategory(category)
+
+        if (!articles) {
+            return res.status(400).send()
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: articles
         })
     } catch (err) {
         return res.status(500).send()

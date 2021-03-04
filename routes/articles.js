@@ -10,7 +10,8 @@ router.get('/api/articles', auth, articles.getAllArticles)
 
 // @desc    Shows single news
 // @route   GET /news/:id
-router.get('/api/articles/:id', auth, articles.getArticle)
+router.get('/api/articles/:id', auth, articles.getArticleById)
+router.get('/api/articles/:category', auth, articles.getArticleByCategory)
 
 // @desc    Process add news
 // @route   POST /news

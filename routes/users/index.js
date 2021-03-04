@@ -1,6 +1,5 @@
 const UserModel = require('../../models/users/');
 const loginTokenModel = require('../../models/loginTokens');
-const CreateError = require('http-error');
 
 exports.getUsers = async (req, res) => {
     try {
@@ -80,22 +79,22 @@ exports.logIn = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await UserModel.getByEmail(email);
-
+        
         if (!user) {
-            return new CreateError.Unauthorized("logIn: User not found")
+            return res.status(401).send("Please login to view this page.");
         }
 
-        await user.comparePassword(password, (err, isMatch) => {
-            if (!isMatch) {
-                return new CreateError.Unauthorized("logIn: comparePassword failed")
-            }
-        });
+        const passwordMatch = await user.comparePassword(password);
+
+        if (!passwordMatch) {
+            return res.status(401).send("logIn: comparePassword failed");
+        }
 
         const accessToken = await user.generateAccessToken();
         const refreshToken = await user.generateRefreshToken();
 
         if (!accessToken || !refreshToken) {
-            return new CreateError.BadRequest("logIn: tokens not generated")
+            return res.status(400).send("logIn: tokens not generated");
         }
 
         const loginToken = {
@@ -127,7 +126,7 @@ exports.logOut = async (req, res) => {
         await loginTokenModel.deleteAllByUserId(req.userId);
         return res.status(200).send()
     } catch (err) {
-        return new CreateError.InternalServerError("Something went wrong")
+        return res.status(500).send("Something went wrong");
     }
 }
 
@@ -165,7 +164,7 @@ exports.signUp = async (req,res) => {
 }
 
 
-exports.checkEmailExist = async (req,res) => {
+exports.checkEmailExist = async (req, res) => {
     try {
         const { email } = req.body
 
@@ -177,6 +176,8 @@ exports.checkEmailExist = async (req,res) => {
                 message: 'This email is already in use'
             })
         } 
+
+        return res.status(202).send();
     } catch (err) {
         return res.status(500).send()
     }
@@ -187,13 +188,13 @@ exports.resetAccessToken = async (req, res) => {
         const { refreshToken } = req.body;
 
         await LoginTokenDB.verifyRefreshToken(refreshToken, async (err, userId) => {
-            if (err) return new CreateError.Unauthorized(err);
+            if (err) return res.status(401).send(err);
 
-            if (!userId) return new CreateError.Unauthorized();
+            if (!userId) return res.status(401).send();
 
             const user = await UserModel.getById(userId)
             
-            if (!user) return new CreateError.Unauthorized();
+            if (!user) return res.status(401).send();
 
             const accessToken = await user.generateAccessToken();
             const update = { 
