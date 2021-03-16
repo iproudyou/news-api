@@ -12,3 +12,4 @@
 - Used **Mongoose Schemas** to model **user and article** to store and manipulate in **MongoDB**
 - Assigns cookies to users to prevent constant re-login
 - Encrypts a user password with **bcrypt**
+- Incorporated **Docker**
