@@ -7,8 +7,8 @@
 
 ## STRUCTURE
 - Communicates with app-ui via **RESTful API and GraphQL**
-- Created a type validation middleware for login and signup requests with **celebrate**
 - Created a middleware for a user authentication with **JWT-Token**
-- Assigns cookies to users to prevent constant re-login
+- Created a type validation middleware for login and signup requests with **celebrate**
 - Used **Mongoose Schemas** to model **user and article** to store and manipulate in **MongoDB**
+- Assigns cookies to users to prevent constant re-login
 - Encrypts a user password with **bcrypt**
