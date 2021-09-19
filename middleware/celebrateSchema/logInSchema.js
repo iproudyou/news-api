@@ -42,7 +42,12 @@ const signUpSchema = {
             .pattern(new RegExp('^[0-9]+$'))
             .allow(''),
         
-        remember: Joi.boolean()
+        remember: Joi.boolean(),
+
+        role: Joi.string()
+            .required()
+            .valid('customer', 'admin')
+            .error(new Error('Role must be either customer or admin'))
     })
 }
 

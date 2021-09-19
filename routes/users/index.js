@@ -132,7 +132,7 @@ exports.logOut = async (req, res) => {
 
 exports.signUp = async (req,res) => {
     try {
-        const { firstName, lastName, email, password, phoneNumber } = req.body
+        const { firstName, lastName, email, password, phoneNumber, role } = req.body
 
         const user = await UserModel.getByEmail(email)
 
@@ -145,7 +145,8 @@ exports.signUp = async (req,res) => {
             lastName,
             email, 
             password,
-            phoneNumber
+            phoneNumber,
+            role,
         }
 
         const createdUser = await UserModel.create(newUser)
